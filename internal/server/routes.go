@@ -12,7 +12,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", s.HelloWorldHandler)
-
 	r.HandleFunc("/health", s.healthHandler)
 
 	return r
