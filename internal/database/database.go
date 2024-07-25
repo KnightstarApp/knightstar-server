@@ -12,6 +12,8 @@ import (
 	"gorm.io/gorm"
 
 	_ "github.com/joho/godotenv/autoload"
+
+	"knightstar/internal/models"
 )
 
 // Service represents a service that interacts with a database.
@@ -51,7 +53,7 @@ func New() Service {
 		log.Fatal(err)
 	}
 	// Migrate the schema in database
-	// db.AutoMigrate(&models.File{})
+	db.AutoMigrate(&models.User{})
 	dbInstance = &service{
 		db: db,
 	}
