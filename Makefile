@@ -5,16 +5,13 @@ all: build
 
 build:
 	@echo "Building..."
-	
-	
 	@go build -o main cmd/api/main.go
 
 # Run the application
 run:
 	@go run cmd/api/main.go
 
-
-# Create DB container
+# Create DB container with Docker
 docker-run:
 	@if docker compose up 2>/dev/null; then \
 		: ; \
@@ -23,7 +20,7 @@ docker-run:
 		docker-compose up; \
 	fi
 
-# Shutdown DB container
+# Shutdown DB container with Docker
 docker-down:
 	@if docker compose down 2>/dev/null; then \
 		: ; \
@@ -32,6 +29,25 @@ docker-down:
 		docker-compose down; \
 	fi
 
+# Create DB container with Podman
+podman-run:
+	@echo "Running with Podman..."
+	@if command -v podman-compose > /dev/null; then \
+		podman-compose up; \
+	else \
+		echo "podman-compose not found"; \
+		exit 1; \
+	fi
+
+# Shutdown DB container with Podman
+podman-down:
+	@echo "Shutting down with Podman..."
+	@if command -v podman-compose > /dev/null; then \
+		podman-compose down; \
+	else \
+		echo "podman-compose not found"; \
+		exit 1; \
+	fi
 
 # Test the application
 test:

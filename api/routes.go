@@ -1,4 +1,4 @@
-package routes
+package api
 
 import (
 	"knightstar/internal/controllers"
@@ -7,16 +7,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func RegisterRoutes() http.Handler {
+func Routes() http.Handler {
 
 	r := mux.NewRouter()
 
 	baseController := controllers.NewBaseController()
+
 	userController := controllers.NewUserController(baseController)
+	serviceController := controllers.NewServiceController(baseController)
 
 	// General routes
-	r.HandleFunc("/", baseController.HelloWorldHandler).Methods("GET")
-	r.HandleFunc("/health", baseController.HealthHandler).Methods("GET")
+	r.HandleFunc("/", serviceController.HelloWorldHandler).Methods("GET")
+	r.HandleFunc("/health", serviceController.HealthHandler).Methods("GET")
 
 	// Subrouter for user routes
 	userRouter := r.PathPrefix("/users").Subrouter()
