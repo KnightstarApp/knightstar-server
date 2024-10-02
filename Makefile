@@ -76,4 +76,18 @@ watch:
 	    fi; \
 	fi
 
+# Kill port on Unix
+kill-port:
+	@if [ ! -z "$(port)" ]; then \
+		PID=$$(lsof -t -i:$(port)); \
+		if [ ! -z "$$PID" ]; then \
+			kill -9 $$PID; \
+			echo "Killed process on port $(port)"; \
+		else \
+			echo "No process found on port $(port)"; \
+		fi; \
+	else \
+		echo "Error: PORT is not set"; \
+	fi
+
 .PHONY: all build run test clean

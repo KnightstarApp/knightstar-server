@@ -51,6 +51,11 @@ clean up binary from the last build
 make clean
 ```
 
+kill process on UNIX port
+```bash
+make port=8080 kill-port
+```
+
 ## Credits 🙏
 
 - The beautiful logo of Knightstar was created using [Canva](https://www.canva.com/). 🎨🖌️
