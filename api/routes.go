@@ -2,6 +2,7 @@ package api
 
 import (
 	"knightstar/internal/controllers"
+	"knightstar/internal/middlewares"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,9 +13,18 @@ func Routes() http.Handler {
 	r := mux.NewRouter()
 
 	baseController := controllers.NewBaseController()
-
 	userController := controllers.NewUserController(baseController)
 	serviceController := controllers.NewServiceController(baseController)
+
+	// Define a map of paths and their corresponding HTTP methods which are allowed without authentication
+	authMiddleware := middlewares.NewAuthMiddleware(map[string][]string{
+		"/":       {"GET"},
+		"/health": {"GET"},
+		"/users":  {"GET", "POST"},
+	})
+
+	// Middlewares
+	r.Use(authMiddleware.Middleware)
 
 	// General routes
 	r.HandleFunc("/", serviceController.HelloWorldHandler).Methods("GET")

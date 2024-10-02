@@ -48,16 +48,27 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Generate JWT token
+	jwtToken, err := util.GenerateToken(user.ID)
+	if err != nil {
+		util.WriteJSONResponse(w, http.StatusInternalServerError, util.JSON{"message": err.Error()})
+		return
+	}
+
 	// Return success response
-	util.WriteJSONResponse(w, http.StatusCreated, util.JSON{"message": "User created successfully", "user": user.ToJSON()})
+	util.WriteJSONResponse(w, http.StatusCreated, util.JSON{"message": "User created successfully", "token": jwtToken, "user": user.ToJSON()})
 }
 
 // Update user
 func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
+	// Validate User's Authorization before updating
+	if !uc.isAuthorizedForAction(w, r) {
+		return
+	}
+
 	// Get the ID from the path
 	vars := mux.Vars(r)
-	id := vars["id"]
-
+	userId := vars["id"]
 	var user models.User
 
 	// Parse the request body into the user struct
@@ -68,7 +79,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 
 	// Check if user exists
 	var existingUser models.User
-	if err := uc.db.First(&existingUser, id).Error; err != nil {
+	if err := uc.db.First(&existingUser, userId).Error; err != nil {
 		util.WriteJSONResponse(w, http.StatusNotFound, util.JSON{"message": "User not found"})
 		return
 	}
@@ -85,13 +96,18 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 
 // Delete user
 func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
+	// Validate User's Authorization before deleting
+	if !uc.isAuthorizedForAction(w, r) {
+		return
+	}
+
 	// Get the ID from the path
 	vars := mux.Vars(r)
-	id := vars["id"]
+	userId := vars["id"]
 
 	// Check if user exists
 	var user models.User
-	if err := uc.db.First(&user, id).Error; err != nil {
+	if err := uc.db.First(&user, userId).Error; err != nil {
 		util.WriteJSONResponse(w, http.StatusNotFound, util.JSON{"message": "User not found"})
 		return
 	}
@@ -108,13 +124,18 @@ func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 
 // Get user
 func (uc *UserController) Get(w http.ResponseWriter, r *http.Request) {
+	// Validate User's Authorization before updating
+	if !uc.isAuthorizedForAction(w, r) {
+		return
+	}
+
 	// Get the ID from the path
 	vars := mux.Vars(r)
-	id := vars["id"]
+	userId := vars["id"]
 
 	// Check if user exists
 	var user models.User
-	if err := uc.db.First(&user, id).Error; err != nil {
+	if err := uc.db.First(&user, userId).Error; err != nil {
 		util.WriteJSONResponse(w, http.StatusNotFound, util.JSON{"message": "User not found"})
 		return
 	}
