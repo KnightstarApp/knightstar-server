@@ -1,0 +1,16 @@
+{
+  "name": "Dev",
+  "v": 1,
+  "id": "4h2y7x6uhue",
+  "variables": [
+    {
+      "key": "baseUrl",
+      "value": "localhost:8080",
+      "secret": false
+    },
+    {
+      "key": "token",
+      "secret": true
+    }
+  ]
+}
